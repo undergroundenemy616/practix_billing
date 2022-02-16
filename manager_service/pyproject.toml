@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "maneger_service"
+version = "0.1.0"
+description = "manager service for billing system of online cinema"
+authors = ["KonstantinChernov <Chernov-k@yandex.ru>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "^4.0.2"
+django-environ = "^0.8.1"
+gunicorn = "^20.1.0"
+psycopg2-binary = "^2.9.3"
+djangorestframework = "^3.13.1"
+celery = "^5.2.3"
+redis = "^4.1.4"
+
+[tool.poetry.dev-dependencies]
+django-debug-toolbar = "^3.2.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
