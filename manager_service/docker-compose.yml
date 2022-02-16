@@ -23,7 +23,7 @@ services:
 
   billing-manager-celery:
     build: .
-    command: celery -A config worker --loglevel=info --logfile=logs/celery.log
+    command: celery -A config worker -l info
     volumes:
       - .:/code
     env_file:
@@ -34,7 +34,7 @@ services:
 
   billing-manager-celery-beat:
     build: .
-    command: celery -A config beat --loglevel=info --logfile=logs/celery.log
+    command: celery -A config beat -l info
     volumes:
       - .:/code
     env_file:
