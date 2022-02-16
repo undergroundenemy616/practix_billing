@@ -4,7 +4,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', include('subscriptions.urls')),
+    path('api/', include('subscribtions.urls')),
 ]
 
 if settings.DEBUG:

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "maneger_service"
+name = "manager_service"
 version = "0.1.0"
 description = "manager service for billing system of online cinema"
 authors = ["KonstantinChernov <Chernov-k@yandex.ru>"]

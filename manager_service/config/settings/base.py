@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'subscriptions'
+    'subscribtions'
 ]
 
 MIDDLEWARE = [
@@ -88,34 +88,34 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'filters': {
-        'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue',
-        }
-    },
-    'formatters': {
-        'default': {
-            'format': '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]',
-        },
-    },
-    'handlers': {
-        'debug-console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'default',
-            'filters': ['require_debug_true'],
-        },
-    },
-    'loggers': {
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['debug-console'],
-            'propagate': False,
-        }
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': True,
+#     'filters': {
+#         'require_debug_true': {
+#             '()': 'django.utils.log.RequireDebugTrue',
+#         }
+#     },
+#     'formatters': {
+#         'default': {
+#             'format': '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]',
+#         },
+#     },
+#     'handlers': {
+#         'debug-console': {
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'default',
+#             'filters': ['require_debug_true'],
+#         },
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'level': 'DEBUG',
+#             'handlers': ['debug-console'],
+#             'propagate': False,
+#         }
+#     },
+# }
 
 LANGUAGE_CODE = 'en-us'
 
@@ -131,3 +131,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(root, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+CELERY_BROKER = os.environ.get("CELERY_BROKER")
+CELERY_BACKEND = os.environ.get("CELERY_BACKEND")

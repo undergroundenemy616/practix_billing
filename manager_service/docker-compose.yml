@@ -1,6 +1,7 @@
 services:
   billing-manager-web:
     build: .
+    command: sh /code/entrypoint.sh
     env_file:
       - ./.env
     volumes:
@@ -22,7 +23,18 @@ services:
 
   billing-manager-celery:
     build: .
-    command: celery worker --app=core --loglevel=info --logfile=logs/celery.log
+    command: celery -A config worker --loglevel=info --logfile=logs/celery.log
+    volumes:
+      - .:/code
+    env_file:
+      - ./.env
+    depends_on:
+      - billing-manager-web
+      - billing-manager-redis
+
+  billing-manager-celery-beat:
+    build: .
+    command: celery -A config beat --loglevel=info --logfile=logs/celery.log
     volumes:
       - .:/code
     env_file:

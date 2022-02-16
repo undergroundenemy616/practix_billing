@@ -5,13 +5,14 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /code
 
-COPY ./requirements ./requirements
-COPY poetry.lock pyproject.toml .
-COPY entrypoint.sh .
+COPY poetry.lock pyproject.toml ./
+COPY entrypoint.sh ./
+
+ENV PYTHONPATH=${PYTHONPATH}:${PWD}
 
 RUN pip3 install poetry
+RUN poetry config virtualenvs.create false
 RUN poetry install
 
 COPY . /code
 
-ENTRYPOINT ["sh", "/code/entrypoint.sh"]
