@@ -39,8 +39,8 @@ class Account(BaseModel):
         OVERDUE = 'Overdue'
         CANCELED = 'Canceled'
 
-    status = models.TextField(_('Статус подписки'), choices=SubscriptionStatuses.choices)
-    payment_token = models.TextField(_('Платежный токен'), null=True, blank=True)
+    status = models.TextField(_('Статус подписки'), choices=SubscriptionStatuses.choices, db_index=True)
+    payment_token = models.TextField(_('Платежный токен'), null=True, blank=True, unique=True)
     expiration_dt = models.DateField(_('Дата окончания подписки'), null=True, blank=True)
     tariff = models.ForeignKey(
         Tariff,
@@ -62,7 +62,8 @@ class Bill(BaseModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='bills'
+        related_name='bills',
+        db_index=True
     )
     status = models.TextField(_('Статус подписки'), choices=BillStatuses.choices)
     amount = models.PositiveIntegerField(_('Сумма к оплате'), null=False, blank=True)
