@@ -13,6 +13,9 @@ psycopg2-binary = "^2.9.3"
 djangorestframework = "^3.13.1"
 celery = "^5.2.3"
 redis = "^4.1.4"
+grpcio-tools = "^1.44.0"
+grpcio = "^1.44.0"
+uuid = "^1.30"
 
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "^3.2.4"

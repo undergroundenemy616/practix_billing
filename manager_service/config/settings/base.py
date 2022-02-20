@@ -88,6 +88,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+NOT_PAID_DAYS_EXPIRATION = os.environ.get("NOT_PAID_DAYS_EXPIRATION")
+
 # LOGGING = {
 #     'version': 1,
 #     'disable_existing_loggers': True,
@@ -132,6 +134,8 @@ STATIC_ROOT = os.path.join(root, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 CELERY_BROKER = os.environ.get("CELERY_BROKER")
 CELERY_BACKEND = os.environ.get("CELERY_BACKEND")
+
+AUTH_GRPC_HOST = os.environ.get("AUTH_GRPC_HOST")
+AUTH_GRPC_PORT = os.environ.get("AUTH_GRPC_PORT")

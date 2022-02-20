@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+message SetRoleRequest {
+  string uuid = 1;
+  string role = 2;
+}
+
+message SetRoleResponse {
+  bool result = 1;
+  string status = 2;
+}
+
+service Auth {
+  rpc SetRole (SetRoleRequest) returns (SetRoleResponse) {}
+}
