@@ -18,9 +18,9 @@ class Tariff(BaseModel):
         SUBSCRIBER = 'Subscriber'
 
     class PeriodTypes(models.Choices):
-        WEEK = timedelta(weeks=1)
-        MONTH = timedelta(weeks=4)
-        YEAR = timedelta(weeks=52)
+        WEEK = timedelta(days=7)
+        MONTH = timedelta(days=30)
+        YEAR = timedelta(days=356)
 
     name = models.CharField(
         _('Название подписки'),
@@ -70,7 +70,6 @@ class Bill(BaseModel):
     status = models.TextField(_('Статус подписки'), choices=BillStatuses.choices)
     amount = models.PositiveIntegerField(_('Сумма к оплате'), null=False, blank=True, editable=False)
     paid_period = models.DurationField(_('Оплачиваемый период'), null=False, blank=True, editable=False)
-    due_dt = models.DateField(_('Срок оплаты'), null=False, blank=True, editable=False)
 
 
 class Payment(BaseModel):
