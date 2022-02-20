@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 import uuid
+from datetime import timedelta
 
 
 class BaseModel(models.Model):
@@ -16,10 +17,10 @@ class Tariff(BaseModel):
     class TariffNames(models.TextChoices):
         SUBSCRIBER = 'Subscriber'
 
-    class PeriodTypes(models.TextChoices):
-        WEEK = 'Week'
-        MONTH = 'Month'
-        YEAR = 'Year'
+    class PeriodTypes(models.Choices):
+        WEEK = timedelta(days=7)
+        MONTH = timedelta(days=30)
+        YEAR = timedelta(days=356)
 
     name = models.CharField(
         _('Название подписки'),
@@ -29,7 +30,7 @@ class Tariff(BaseModel):
         choices=TariffNames.choices
     )
     description = models.TextField(null=True, blank=True)
-    period = models.TextField(_('Период подписки'), choices=PeriodTypes.choices, default=PeriodTypes.MONTH)
+    period = models.DurationField(_('Период подписки'), choices=PeriodTypes.choices, default=PeriodTypes.MONTH)
     amount = models.PositiveIntegerField(_('Цена подписки'), null=False, blank=True)
 
 
@@ -63,9 +64,21 @@ class Bill(BaseModel):
         null=True,
         blank=True,
         related_name='bills',
-        db_index=True
+        db_index=True,
+        editable=False
     )
     status = models.TextField(_('Статус подписки'), choices=BillStatuses.choices)
-    amount = models.PositiveIntegerField(_('Сумма к оплате'), null=False, blank=True)
-    paid_period = models.DurationField(_('Оплачиваемый период'), null=False, blank=True)
-    due_dt = models.DateField(_('Срок оплаты'), null=False, blank=True)
+    amount = models.PositiveIntegerField(_('Сумма к оплате'), null=False, blank=True, editable=False)
+    paid_period = models.DurationField(_('Оплачиваемый период'), null=False, blank=True, editable=False)
+
+
+class Payment(BaseModel):
+    bill = models.ForeignKey(
+        Bill,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='payments',
+        editable=False
+    )
+    is_success = models.BooleanField(_('Статус оплаты'), null=False, default=False, blank=True)
