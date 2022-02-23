@@ -4,6 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 
+from api import payments
 from core.logger import LOGGING
 
 logger = logging.getLogger(__name__)
@@ -20,10 +21,7 @@ app = FastAPI(
 )
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
+app.include_router(payments.router, prefix='/payments', tags=['Payment'])
 
 if __name__ == '__main__':
     uvicorn.run(
