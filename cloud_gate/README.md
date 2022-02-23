@@ -6,6 +6,7 @@ OpenAPI: [http://localhost/api/docs](http://localhost/api/docs)
 
 
 **Setup**
+
 1. Create .env file with sample:
 
 `$ cp env.sample .env`
