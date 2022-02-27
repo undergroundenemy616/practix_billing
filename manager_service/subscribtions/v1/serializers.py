@@ -37,7 +37,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 class CreateSubscriptionSerializer(serializers.Serializer):
     tariff = serializers.PrimaryKeyRelatedField(queryset=Tariff.objects.all(), required=True, allow_null=False)
-    cryptogram = serializers.CharField(required=False)
+    cryptogram = serializers.CharField(required=True)
 
     def validate(self, attrs):
         if self.context['request'].user.expiration_dt:
