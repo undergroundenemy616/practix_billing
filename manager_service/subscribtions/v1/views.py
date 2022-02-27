@@ -18,12 +18,12 @@ class SubscriptionViewSet(GenericViewSet,
                           UpdateModelMixin):
     queryset = Account.objects.select_related('tariff')
     permission_classes = [IsAuthenticated]
+    serializer_class = SubscriptionSerializer
 
     def get_serializer_class(self):
         if self.action == 'create':
             return CreateSubscriptionSerializer
-        else:
-            return SubscriptionSerializer
+        return self.serializer_class
 
     def perform_destroy(self, instance):
         instance.cancel_subscribe()
