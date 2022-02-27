@@ -40,7 +40,7 @@ class CreateSubscriptionSerializer(serializers.Serializer):
     cryptogram = serializers.CharField(required=True)
 
     def validate(self, attrs):
-        if self.context['request'].user.expiration_dt:
+        if self.context['request'].user.status == Account.SubscriptionStatuses.ACTIVE:
             raise serializers.ValidationError('User already has active subscription')
 
     def create(self, validated_data):
