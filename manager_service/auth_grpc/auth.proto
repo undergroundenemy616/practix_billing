@@ -10,6 +10,15 @@ message SetRoleResponse {
   string status = 2;
 }
 
+message CheckUserExistsRequest {
+  string uuid = 1;
+}
+
+message CheckUserExistsResponse {
+  bool result = 1;
+}
+
 service Auth {
   rpc SetRole (SetRoleRequest) returns (SetRoleResponse) {}
+  rpc CheckUserExists (CheckUserExistsRequest) returns (CheckUserExistsResponse) {}
 }
