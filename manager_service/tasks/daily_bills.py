@@ -1,11 +1,10 @@
 from datetime import datetime, timedelta
 
+from auth_grpc.set_role import set_auth_role
 from celery import shared_task
 from django.conf import settings
 from django.db import transaction
 from django.db.models import F, Q
-
-from auth_grpc.set_role import set_auth_role
 from subscribtions.models import Account, Bill, Payment
 
 

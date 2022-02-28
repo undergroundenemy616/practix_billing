@@ -1,7 +1,9 @@
-from django.db import models
-from django.utils.translation import gettext_lazy as _
 import uuid
 from datetime import timedelta
+
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class BaseModel(models.Model):
@@ -14,6 +16,11 @@ class BaseModel(models.Model):
 
 
 class Tariff(BaseModel):
+
+    class Meta:
+        verbose_name = 'Тариф'
+        verbose_name_plural = 'Тарифы'
+
     class TariffNames(models.TextChoices):
         SUBSCRIBER = 'Subscriber'
 
@@ -29,20 +36,25 @@ class Tariff(BaseModel):
         blank=True,
         choices=TariffNames.choices
     )
-    description = models.TextField(null=True, blank=True)
-    period = models.DurationField(_('Период подписки'), choices=PeriodTypes.choices, default=PeriodTypes.MONTH)
-    amount = models.PositiveIntegerField(_('Цена подписки'), null=False, blank=True)
+    description = models.TextField(_('Описание'), null=True, blank=True)
+    period = models.DurationField(_('Период'), choices=PeriodTypes.choices, default=PeriodTypes.MONTH)
+    amount = models.PositiveIntegerField(_('Цена'), null=False, blank=True)
 
 
 class Account(BaseModel):
+
+    class Meta:
+        verbose_name = 'Аккаунт'
+        verbose_name_plural = 'Аккаунты'
+
     class SubscriptionStatuses(models.TextChoices):
         ACTIVE = 'Active'
         OVERDUE = 'Overdue'
         CANCELED = 'Canceled'
 
-    status = models.TextField(_('Статус подписки'), choices=SubscriptionStatuses.choices, db_index=True)
+    status = models.TextField(_('Статус'), choices=SubscriptionStatuses.choices, db_index=True)
     payment_token = models.TextField(_('Платежный токен'), null=True, blank=True, unique=True)
-    expiration_dt = models.DateField(_('Дата окончания подписки'), null=True, blank=True)
+    expiration_dt = models.DateField(_('Дата окончания'), null=True, blank=True)
     tariff = models.ForeignKey(
         Tariff,
         on_delete=models.SET_NULL,
@@ -51,8 +63,19 @@ class Account(BaseModel):
         related_name='accounts'
     )
 
+    def cancel_subscribe(self):
+        self.status = self.SubscriptionStatuses.CANCELED
+        self.expiration_dt = None
+        self.tariff = None
+        self.save()
+
 
 class Bill(BaseModel):
+
+    class Meta:
+        verbose_name = 'Счет'
+        verbose_name_plural = 'Счета'
+
     class BillStatuses(models.TextChoices):
         PAID = 'Paid'
         IN_WORK = 'In work'
@@ -67,12 +90,17 @@ class Bill(BaseModel):
         db_index=True,
         editable=False
     )
-    status = models.TextField(_('Статус подписки'), choices=BillStatuses.choices)
+    status = models.TextField(_('Статус'), choices=BillStatuses.choices)
     amount = models.PositiveIntegerField(_('Сумма к оплате'), null=False, blank=True, editable=False)
-    paid_period = models.DurationField(_('Оплачиваемый период'), null=False, blank=True, editable=False)
+    paid_period = models.DurationField(_('Оплачиваемый период'), null=False, blank=True, editable=False, default=timedelta(days=30))
 
 
 class Payment(BaseModel):
+
+    class Meta:
+        verbose_name = 'Транзакция'
+        verbose_name_plural = 'Транзакции'
+
     bill = models.ForeignKey(
         Bill,
         on_delete=models.SET_NULL,
@@ -81,4 +109,4 @@ class Payment(BaseModel):
         related_name='payments',
         editable=False
     )
-    is_success = models.BooleanField(_('Статус оплаты'), null=False, default=False, blank=True)
+    is_success = models.BooleanField(_('Статус'), null=False, default=False, blank=True)
