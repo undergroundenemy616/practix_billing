@@ -81,6 +81,11 @@ class Bill(BaseModel):
         IN_WORK = 'In work'
         NOT_PAID = 'Not paid'
 
+    class PaymentType(models.TextChoices):
+        CRYPTOGRAM = 'Cryptogram'
+        TOKEN = 'Token'
+        POST3DS = '3DS'
+
     account = models.ForeignKey(
         Account,
         on_delete=models.SET_NULL,
@@ -91,6 +96,8 @@ class Bill(BaseModel):
         editable=False
     )
     status = models.TextField(_('Статус'), choices=BillStatuses.choices)
+    payment_type = models.TextField(_('Тип платежа'), choices=PaymentType.choices)
+    payment_string = models.TextField(_('Платежная строка'), null=True, blank=True)
     amount = models.PositiveIntegerField(_('Сумма к оплате'), null=False, blank=True, editable=False)
     paid_period = models.DurationField(_('Оплачиваемый период'), null=False, blank=True, editable=False, default=timedelta(days=30))
 
