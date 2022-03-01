@@ -19,15 +19,15 @@ class PaymentProcessor:
         if self.bill.status == Bill.BillStatuses.NOT_PAID:
             return
 
-        # match self.bill.payment_type:
-        #     case Bill.PaymentType.CRYPTOGRAM:
-        #         self._pay_with_cryptogram()
-        #     case Bill.PaymentType.TOKEN:
-        #         self._pay_with_token()
-        #     case Bill.PaymentType.POST3DS:
-        #         self._pay_with_3ds()
-        #     case _:
-        #         pass
+        match self.bill.payment_type:
+            case Bill.PaymentType.CRYPTOGRAM:
+                self._pay_with_cryptogram()
+            case Bill.PaymentType.TOKEN:
+                self._pay_with_token()
+            case Bill.PaymentType.POST3DS:
+                self._pay_with_3ds()
+            case _:
+                pass
 
     @staticmethod
     def _is_payment_successful(response: Response):
