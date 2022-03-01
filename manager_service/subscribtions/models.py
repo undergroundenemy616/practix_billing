@@ -93,15 +93,23 @@ class Bill(BaseModel):
         blank=True,
         related_name='bills',
         db_index=True,
-        editable=False
+        editable=False,
     )
     status = models.TextField(_('Статус'), choices=BillStatuses.choices, default=BillStatuses.IN_WORK)
-    payment_type = models.TextField(_('Тип платежа'), choices=PaymentType.choices, null=False, blank=True)
-    ip_address = models.TextField(_('IP адрес'), null=True, blank=True)
-    card_cryptogram_packet = models.TextField(_('Криптограмма'), null=True, blank=True)
-    pa_res = models.TextField(_('Pa Res'), null=True, blank=True)
+    ip_address = models.TextField(_('IP адрес'), null=True, blank=True, editable=False)
+    card_cryptogram_packet = models.TextField(_('Криптограмма'), null=True, blank=True, editable=False)
+    pa_res = models.TextField(_('Pa Res'), null=True, blank=True, editable=False)
     amount = models.PositiveIntegerField(_('Сумма к оплате'), null=False, blank=True, editable=False)
-    paid_period = models.DurationField(_('Оплачиваемый период'), null=False, blank=True, editable=False, default=timedelta(days=30))
+    paid_period = models.DurationField(_('Оплачиваемый период'),
+                                       null=False,
+                                       blank=True,
+                                       editable=False,
+                                       default=timedelta(days=30))
+    payment_type = models.TextField(_('Тип платежа'),
+                                    choices=PaymentType.choices,
+                                    null=False,
+                                    blank=True,
+                                    editable=False)
 
 
 class Payment(BaseModel):
@@ -116,8 +124,9 @@ class Payment(BaseModel):
         null=True,
         blank=True,
         related_name='payments',
-        editable=False
+        editable=False,
+        db_index=True
     )
-    transaction_id = models.PositiveIntegerField(_('ID транзакции'), null=True, blank=True)
+    transaction_id = models.PositiveIntegerField(_('ID транзакции'), null=True, blank=True, editable=False)
     is_success = models.BooleanField(_('Статус'), null=False, default=False, blank=True)
     info = models.TextField(_('Информация'), null=True, blank=True)
