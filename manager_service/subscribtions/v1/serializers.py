@@ -1,7 +1,9 @@
+from django.db.models import F
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from subscribtions.models import Account, Bill, Payment, Tariff
-from tasks.create_sub import create_sub
+from django.db import transaction
+from tasks.payment import make_payment_on_bill
 
 
 class BillSerializer(serializers.ModelSerializer):
@@ -26,27 +28,40 @@ class TariffSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SubscriptionSerializer(serializers.ModelSerializer):
+class BaseSubscriptionSerializer(serializers.ModelSerializer):
     tariff = serializers.PrimaryKeyRelatedField(queryset=Tariff.objects.all(), required=True, allow_null=False)
 
     class Meta:
         model = Account
-        fields = '__all__'
-        read_only_fields = ['id', 'status', 'payment_token', 'expiration_dt']
+        exclude = ['created_at', 'updated_at', 'payment_token']
+        read_only_fields = ['id', 'status', 'expiration_dt',
+                            'created_at', 'updated_at']
 
 
-class CreateSubscriptionSerializer(serializers.Serializer):
-    tariff = serializers.PrimaryKeyRelatedField(queryset=Tariff.objects.all(), required=True, allow_null=False)
-    cryptogram = serializers.CharField(required=True)
+class CreateSubscriptionSerializer(BaseSubscriptionSerializer):
+    cryptogram = serializers.CharField(required=True, write_only=True)
 
     def validate(self, attrs):
         if self.context['request'].user.status == Account.SubscriptionStatuses.ACTIVE:
             raise serializers.ValidationError('User already has active subscription')
 
-    def create(self, validated_data):
-        account, result, message = create_sub(self.context['request'].user, **validated_data)
-        if not result:
-            return Response(data={'message': message,
-                                  'result': result},
+    @transaction.atomic()
+    def update(self, instance, validated_data):
+        bill = Bill.objects.create(account=instance,
+                                   payment_type=Bill.PaymentType.CRYPTOGRAM,
+                                   ip_address=self.context['request'].headers['X-Real-IP'],
+                                   card_cryptogram_packet=validated_data['cryptogram'],
+                                   paid_period=validated_data['tariff'].period,
+                                   amount=validated_data['tariff'].amount)
+        make_payment_on_bill.delay(bill_uuid=bill.od)
+        updated_bill = Bill.objects.filter(id=bill.id).first()
+        if updated_bill.BillStatuses.IN_WORK:
+            payment = Payment.objects.filter(bill=updated_bill, is_success=False).first()
+            return Response(data={'message': payment.info,
+                                  'result': 'error'},
                             status=status.HTTP_400_BAD_REQUEST)
-        return account
+        instance.status = instance.SubscriptionStatuses.ACTIVE
+        instance.tariff = validated_data['tariff']
+        instance.expiration_dt = F('expiration_dt') + instance.tariff.period
+        instance.save()
+        return instance

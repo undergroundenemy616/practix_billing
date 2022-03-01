@@ -1,32 +1,36 @@
-from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
-                                   ListModelMixin, RetrieveModelMixin,
-                                   UpdateModelMixin)
+from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
-from subscribtions.models import Account, Bill, Payment, Tariff
+from subscribtions.models import Account, Payment, Tariff
 from subscribtions.v1.serializers import (CreateSubscriptionSerializer,
                                           PaymentSerializer,
-                                          SubscriptionSerializer,
+                                          BaseSubscriptionSerializer,
                                           TariffSerializer)
 from utils.pagination import DynamicPageNumberPagination
+from utils.no_patch_api_views import UpdateAPIView, RetrieveUpdateDestroyAPIView
 
 
-class SubscriptionViewSet(GenericViewSet,
-                          CreateModelMixin,
-                          RetrieveModelMixin,
-                          DestroyModelMixin,
-                          UpdateModelMixin):
+class SubscriptionView(RetrieveUpdateDestroyAPIView):
     queryset = Account.objects.select_related('tariff')
     permission_classes = [IsAuthenticated]
-    serializer_class = SubscriptionSerializer
+    serializer_class = BaseSubscriptionSerializer
 
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.request.method == 'PUT':
             return CreateSubscriptionSerializer
         return self.serializer_class
 
     def perform_destroy(self, instance):
         instance.cancel_subscribe()
+
+    def get_object(self):
+        return self.request.user
+
+
+class ChangeTariffSubscriptionView(UpdateAPIView):
+    queryset = Account.objects.select_related('tariff')
+    permission_classes = [IsAuthenticated]
+    serializer_class = BaseSubscriptionSerializer
 
 
 class TariffViewSet(GenericViewSet,

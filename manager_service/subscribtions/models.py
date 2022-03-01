@@ -95,11 +95,10 @@ class Bill(BaseModel):
         db_index=True,
         editable=False
     )
-    status = models.TextField(_('Статус'), choices=BillStatuses.choices)
-    payment_type = models.TextField(_('Тип платежа'), choices=PaymentType.choices)
+    status = models.TextField(_('Статус'), choices=BillStatuses.choices, default=BillStatuses.IN_WORK)
+    payment_type = models.TextField(_('Тип платежа'), choices=PaymentType.choices, null=False, blank=True)
     ip_address = models.TextField(_('IP адрес'), null=True, blank=True)
     card_cryptogram_packet = models.TextField(_('Криптограмма'), null=True, blank=True)
-    transaction_id = models.PositiveIntegerField(_('ID транзакции'), null=True, blank=True)
     pa_res = models.TextField(_('Pa Res'), null=True, blank=True)
     amount = models.PositiveIntegerField(_('Сумма к оплате'), null=False, blank=True, editable=False)
     paid_period = models.DurationField(_('Оплачиваемый период'), null=False, blank=True, editable=False, default=timedelta(days=30))
@@ -119,4 +118,6 @@ class Payment(BaseModel):
         related_name='payments',
         editable=False
     )
+    transaction_id = models.PositiveIntegerField(_('ID транзакции'), null=True, blank=True)
     is_success = models.BooleanField(_('Статус'), null=False, default=False, blank=True)
+    info = models.TextField(_('Информация'), null=True, blank=True)
