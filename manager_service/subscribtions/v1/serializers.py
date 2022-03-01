@@ -53,7 +53,7 @@ class CreateSubscriptionSerializer(BaseSubscriptionSerializer):
                                    card_cryptogram_packet=validated_data['cryptogram'],
                                    paid_period=validated_data['tariff'].period,
                                    amount=validated_data['tariff'].amount)
-        make_payment_on_bill.delay(bill_uuid=bill.od)
+        make_payment_on_bill.delay(bill_uuid=bill.id)
         updated_bill = Bill.objects.filter(id=bill.id).first()
         if updated_bill.BillStatuses.IN_WORK:
             payment = Payment.objects.filter(bill=updated_bill, is_success=False).first()
