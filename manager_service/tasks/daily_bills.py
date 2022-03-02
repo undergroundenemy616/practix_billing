@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from auth_grpc.set_role import set_auth_role
+from auth_grpc.functions import set_auth_role
 from celery import shared_task
 from django.conf import settings
 from django.db import transaction

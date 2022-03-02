@@ -13,7 +13,7 @@ class SubscriptionJWTAuth(JWTAuthentication):
         self.user_model = Account
 
     def get_user(self, validated_token):
-        from auth_grpc.set_role import check_user_exits
+        from auth_grpc.functions import check_user_exits
         try:
             user_id = validated_token[api_settings.USER_ID_CLAIM]
         except KeyError:
