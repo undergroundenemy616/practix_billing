@@ -13,9 +13,10 @@ class PaymentProcessor:
 
     def __init__(self, bill: Bill):
         self.bill = bill
+        self.payment_id = None
         self.gate_uri = os.environ.get('GATE_URI')
 
-    def pay(self):
+    def pay(self) -> UUID:
         if self.bill.status == Bill.BillStatuses.NOT_PAID:
             return
 
@@ -28,6 +29,7 @@ class PaymentProcessor:
                 self._pay_with_3ds()
             case _:
                 pass
+        return self.payment_id
 
     @staticmethod
     def _is_payment_successful(response: Response):
@@ -47,6 +49,7 @@ class PaymentProcessor:
                           transaction_id=transaction_id,
                           is_success=True)
         payment.save()
+        self.payment_id = payment.id
 
         self.bill.status = Bill.BillStatuses.PAID
         self.bill.save()
@@ -58,6 +61,7 @@ class PaymentProcessor:
     def _save_fault_transaction(self):
         payment = Payment(bill=self.bill, is_success=False)
         payment.save()
+        self.payment_id = payment.id
 
     def _pay_with_cryptogram(self):
         amount: int = self.bill.amount
