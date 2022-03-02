@@ -1,5 +1,15 @@
+version: '3.9'
+
+volumes:
+  billing-manager-postgres_data:
+  billing-manager-redis_data:
+  rabbitmq_data:
+
+
 services:
   billing-manager-web:
+    container_name: web
+    platform: linux/amd64
     build: .
     command: sh /code/entrypoint.sh
     env_file:
@@ -10,6 +20,8 @@ services:
       - billing-manager-db
 
   billing-manager-nginx:
+    container_name: nginx
+    platform: linux/amd64
     image: nginx:1.19.2
     depends_on:
       - billing-manager-web
@@ -22,6 +34,8 @@ services:
       - ./static:/static
 
   billing-manager-celery:
+    container_name: celery_worker
+    platform: linux/amd64
     build: .
     command: celery -A config worker -l info
     volumes:
@@ -29,10 +43,12 @@ services:
     env_file:
       - ./.env
     depends_on:
-      - billing-manager-web
-      - billing-manager-redis
+      rabbitmq:
+        condition: service_healthy
 
   billing-manager-celery-beat:
+    container_name: celery_beat
+    platform: linux/amd64
     build: .
     command: celery -A config beat -l info
     volumes:
@@ -44,18 +60,57 @@ services:
       - billing-manager-redis
 
   billing-manager-redis:
+    container_name: redis
+    platform: linux/amd64
     image: redis:6.2.6-alpine
     volumes:
       - billing-manager-redis_data:/var/lib/redis/data
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
   billing-manager-db:
+    container_name: postgres_db
+    platform: linux/amd64
     image: postgres:14
     volumes:
       - billing-manager-postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
 
+  rabbitmq:
+    container_name: rabbitmq
+    platform: linux/amd64
+    image: 'bitnami/rabbitmq:3.7'
+    expose:
+      - 4369
+      - 5672
+      - 25672
+      - 15672
+    volumes:
+      - rabbitmq_data:/bitnami
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
 
-volumes:
-  billing-manager-postgres_data:
-  billing-manager-redis_data:
+  celery_flower:
+    container_name: celery_flower
+    platform: linux/amd64
+    image: gregsi/latest-celery-flower-docker:latest
+    environment:
+      - AMQP_USERNAME=user
+      - AMQP_PASSWORD=bitnami
+      - AMQP_ADMIN_USERNAME=user
+      - AMQP_ADMIN_PASSWORD=bitnami
+      - AMQP_HOST=rabbitmq
+      - AMQP_PORT=5672
+      - AMQP_ADMIN_HOST=rabbitmq
+      - AMQP_ADMIN_PORT=15672
+      - FLOWER_BASIC_AUTH=user:test
+    ports:
+      - '5555:5555'
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
