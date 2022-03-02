@@ -1,5 +1,11 @@
+volumes:
+  billing-manager-postgres_data:
+  billing-manager-redis_data:
+
+
 services:
   billing-manager-web:
+    platform: linux/amd64
     build: .
     command: sh /code/entrypoint.sh
     env_file:
@@ -10,6 +16,7 @@ services:
       - billing-manager-db
 
   billing-manager-nginx:
+    platform: linux/amd64
     image: nginx:1.19.2
     depends_on:
       - billing-manager-web
@@ -22,6 +29,7 @@ services:
       - ./static:/static
 
   billing-manager-celery:
+    platform: linux/amd64
     build: .
     command: celery -A config worker -l info
     volumes:
@@ -33,6 +41,7 @@ services:
       - billing-manager-redis
 
   billing-manager-celery-beat:
+    platform: linux/amd64
     build: .
     command: celery -A config beat -l info
     volumes:
@@ -44,18 +53,15 @@ services:
       - billing-manager-redis
 
   billing-manager-redis:
+    platform: linux/amd64
     image: redis:6.2.6-alpine
     volumes:
       - billing-manager-redis_data:/var/lib/redis/data
 
   billing-manager-db:
+    platform: linux/amd64
     image: postgres:14
     volumes:
       - billing-manager-postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
-
-
-volumes:
-  billing-manager-postgres_data:
-  billing-manager-redis_data:
