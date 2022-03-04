@@ -4,6 +4,8 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from environ import environ
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -11,6 +13,13 @@ root = environ.Path(__file__) - 3  # get root of the project
 env = environ.Env()
 env_file = str(root.path('.env'))
 env.read_env(env_file)  # reading .env file
+
+sentry_sdk.init(
+    dsn=os.environ.get('SENTRY_DSN'),
+    integrations=[DjangoIntegration()],
+    traces_sample_rate=1.0,
+    send_default_pii=True
+)
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
@@ -128,35 +137,6 @@ REST_FRAMEWORK = {
     )
 
 }
-
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': True,
-#     'filters': {
-#         'require_debug_true': {
-#             '()': 'django.utils.log.RequireDebugTrue',
-#         }
-#     },
-#     'formatters': {
-#         'default': {
-#             'format': '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]',
-#         },
-#     },
-#     'handlers': {
-#         'debug-console': {
-#             'class': 'logging.StreamHandler',
-#             'formatter': 'default',
-#             'filters': ['require_debug_true'],
-#         },
-#     },
-#     'loggers': {
-#         'django.db.backends': {
-#             'level': 'DEBUG',
-#             'handlers': ['debug-console'],
-#             'propagate': False,
-#         }
-#     },
-# }
 
 LANGUAGE_CODE = 'en-us'
 
