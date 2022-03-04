@@ -16,8 +16,8 @@ services:
       options:
         max-size: 50m
 
-  nginx:
-    container_name: nginx
+  cloud_nginx:
+    container_name: cloud_nginx
     restart: always
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
