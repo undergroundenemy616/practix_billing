@@ -2,7 +2,7 @@
 
 Service to emulate cloudpayments.ru API for local testing.
 
-OpenAPI: [http://localhost/api/docs](http://localhost/api/docs)
+OpenAPI: [http://localhost:81/api/docs](http://localhost:81/api/docs)
 
 
 **Setup**
@@ -18,7 +18,7 @@ OpenAPI: [http://localhost/api/docs](http://localhost/api/docs)
 `$ docker-compose up --build -d`
 
 **Single payment with cryptogram**
-Endpoint: [http://localhost/payments/cards/charge](http://localhost/payments/cards/charge)
+Endpoint: [http://localhost:81/payments/cards/charge](http://localhost:81/payments/cards/charge)
 
 Sample POST request with JSON body:
 ```
@@ -49,7 +49,7 @@ Sample POST request with JSON body:
 
 **Single payment with 3DSecure**
 
-Endpoint: [http://localhost/payments/cards/post3ds](http://localhost/payments/cards/post3ds)
+Endpoint: [http://localhost:81/payments/cards/post3ds](http://localhost:81/payments/cards/post3ds)
 
 Sample POST request with JSON body:
 ```
@@ -61,7 +61,7 @@ Sample POST request with JSON body:
 
 **Recurring payment with token**
 
-Endpoint: [http://localhost/payments/tokens/charge](http://localhost/payments/tokens/charge)
+Endpoint: [http://localhost:81/payments/tokens/charge](http://localhost:81/payments/tokens/charge)
 
 Sample POST request with JSON body:
 ```
