@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'drf_yasg',
-    'subscribtions'
+    'subscribtions',
+    'import_export'
 ]
 
 MIDDLEWARE = [
@@ -159,7 +160,7 @@ CELERY_BACKEND = os.environ.get("CELERY_BACKEND")
 AUTH_GRPC_HOST = os.environ.get("AUTH_GRPC_HOST")
 AUTH_GRPC_PORT = os.environ.get("AUTH_GRPC_PORT")
 
-
+IMPORT_EXPORT_USE_TRANSACTIONS = True
 # --------------------- Pagination ------------------------
 PAGE_SIZE_QUERY_PARAM = 'per_page'
 PAGE_QUERY_PARAM = 'page'

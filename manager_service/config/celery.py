@@ -11,7 +11,7 @@ app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
     'daily_pay_task': {
-        'task': 'tasks.create_daily_bills',
+        'task': 'tasks.daily_bills.create_daily_bills',
         'schedule': crontab(minute=0, hour=12)
     },
 }
