@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'tasks',
     'drf_yasg',
     'subscribtions',
     'import_export'
@@ -102,7 +103,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 NOT_PAID_DAYS_EXPIRATION = os.environ.get("NOT_PAID_DAYS_EXPIRATION")
 
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
@@ -154,8 +154,13 @@ STATIC_ROOT = os.path.join(root, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CELERY_BROKER = os.environ.get("CELERY_BROKER")
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER")
 CELERY_BACKEND = os.environ.get("CELERY_BACKEND")
+
+CELERY_IMPORTS = (
+    "tasks.daily_bills",
+    "tasks.payment"
+)
 
 AUTH_GRPC_HOST = os.environ.get("AUTH_GRPC_HOST")
 AUTH_GRPC_PORT = os.environ.get("AUTH_GRPC_PORT")
