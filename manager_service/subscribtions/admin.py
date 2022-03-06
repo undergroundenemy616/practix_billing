@@ -1,9 +1,11 @@
 from django.contrib import admin
+from import_export.admin import ImportExportModelAdmin
+
 from subscribtions.models import Account, Payment, Tariff
 
 
 @admin.register(Account)
-class AccountAdmin(admin.ModelAdmin):
+class AccountAdmin(ImportExportModelAdmin):
     list_display = ('pk', 'status', 'expiration_dt', 'get_tariff',)
 
     list_filter = ('status', 'expiration_dt', 'tariff',)
@@ -14,12 +16,12 @@ class AccountAdmin(admin.ModelAdmin):
 
 
 @admin.register(Tariff)
-class TariffAdmin(admin.ModelAdmin):
+class TariffAdmin(ImportExportModelAdmin):
     list_display = ('pk', 'name', 'description', 'period', 'amount',)
     search_fields = ('description', 'amount')
 
 
 @admin.register(Payment)
-class PaymentAdmin(admin.ModelAdmin):
+class PaymentAdmin(ImportExportModelAdmin):
     list_display = ('pk', 'bill', 'is_success',)
     list_filter = ('is_success', 'bill',)
