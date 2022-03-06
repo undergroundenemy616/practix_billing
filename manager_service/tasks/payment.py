@@ -112,7 +112,7 @@ class PaymentProcessor:
 
 @shared_task
 def make_payment_on_bill(bill_uuid: UUID):
-    bill = Bill.objects.get(id=bill_uuid)
+    bill = Bill.objects.filter(id=bill_uuid).first()
     if bill:
         processor = PaymentProcessor(bill)
         processor.pay()
