@@ -1,0 +1,52 @@
+@startuml
+
+participant Client
+participant Billing_service
+database BillingDB
+participant Auth_service #99FF99
+participant worker
+participant Cloud_gate #99FF99
+Client -> Billing_service : send request to \ncreate subscription
+Billing_service -> BillingDB: check if Account object with\nsuch UUID from jwt payload exists
+alt account exists
+BillingDB --> Billing_service : return Account object
+Billing_service -> Billing_service : add Account object to request
+
+else Account doesn't exist
+BillingDB --> Billing_service : return None
+Billing_service -> Auth_service : check if user with such UUID\nfrom jwt payload exists
+
+alt user exists
+Auth_service --> Billing_service : return True
+Billing_service -> Billing_service : create Account object and\n add account to request
+
+else user doesn't exist
+Auth_service --> Billing_service : return False
+Billing_service -> Client : send AuthenticationFailed response
+
+end
+
+end
+
+Billing_service -> BillingDB: create Bill object
+Billing_service -> worker: send created Bill object UUID
+worker -> Cloud_gate: send request to make\n payment by cryptogramm
+Cloud_gate -> worker: send response\nwith payment status info
+worker -> BillingDB: create Payment object by payment info
+worker -> BillingDB: update Bill object
+Billing_service -> BillingDB: get Bill object by UUID
+
+Billing_service -> Billing_service: check Bill object status
+
+alt bill status is PAID
+Billing_service -> BillingDB: update Account object
+Billing_service -> Auth_service : change user role to Subscriber
+Billing_service -> Client : return updated Account object
+
+else bill status is not PAID
+Billing_service -> Client : return BadRequest response
+
+end
+
+
+@enduml
