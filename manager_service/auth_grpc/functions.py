@@ -1,5 +1,7 @@
 import uuid
 
+import backoff
+
 import auth_pb2
 import auth_pb2_grpc
 import grpc
@@ -11,6 +13,7 @@ auth_channel = grpc.insecure_channel(
 auth_client = auth_pb2_grpc.AuthStub(auth_channel)
 
 
+@backoff.on_exception(backoff.expo, grpc.RpcError)
 def set_auth_role(id_: uuid.UUID, role: str):
     set_role_request = auth_pb2.SetRoleRequest(
         uuid=id_, role=role
@@ -21,5 +24,6 @@ def set_auth_role(id_: uuid.UUID, role: str):
     return auth_response.result
 
 
+@backoff.on_exception(backoff.expo, grpc.RpcError)
 def check_user_exits(id_: uuid.UUID):
     return auth_client.CheckUserExists(uuid=id_).result
