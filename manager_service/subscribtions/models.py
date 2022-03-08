@@ -40,6 +40,9 @@ class Tariff(BaseModel):
     period = models.DurationField(_('Период'), choices=PeriodTypes.choices, default=PeriodTypes.MONTH)
     amount = models.PositiveIntegerField(_('Цена'), null=False, blank=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Account(BaseModel):
 
