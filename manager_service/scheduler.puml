@@ -1,0 +1,44 @@
+@startuml
+
+participant scheduler
+database BillingDB
+participant worker
+participant Cloud_gate #99FF99
+participant Auth_service #99FF99
+scheduler -> BillingDB : get accounts with\nexpired subscription
+BillingDB --> scheduler : accounts queryset
+
+scheduler -> BillingDB : create bills for accounts
+group loop [for each bill]
+scheduler -> worker : send bill id
+
+worker -> Cloud_gate : pay the bill by token
+Cloud_gate --> worker : payment result
+
+worker -> BillingDB : create payment object
+worker -> scheduler : send payment object id
+
+scheduler -> BillingDB : check if payment succeed
+
+alt successful case
+BillingDB --> scheduler : payment success
+scheduler -> BillingDB : update account\nsubscription to "active"
+scheduler -> Auth_service : update user role
+
+else unsuccessful case
+BillingDB --> scheduler : payment unsuccess
+scheduler -> BillingDB : check account expiration\ndate
+
+alt expiration period less than 3 days
+scheduler -> BillingDB : update account\nsubscription to "overdue"
+
+else expiration period more than 3 days
+scheduler -> BillingDB : update account\nsubscription to "cancelled"
+scheduler -> Auth_service : update user role
+
+end
+
+end
+
+end
+@enduml

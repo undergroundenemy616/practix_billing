@@ -3,7 +3,7 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 from subscribtions.models import Account, Bill, Payment, Tariff
 from django.db import transaction
-from tasks.payment import make_payment_on_bill
+from tasks.worker import make_payment_on_bill
 
 
 class BillSerializer(serializers.ModelSerializer):
