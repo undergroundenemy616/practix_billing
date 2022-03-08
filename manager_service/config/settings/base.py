@@ -158,8 +158,8 @@ CELERY_BROKER_URL = os.environ.get("CELERY_BROKER")
 CELERY_BACKEND = os.environ.get("CELERY_BACKEND")
 
 CELERY_IMPORTS = (
-    "tasks.daily_bills",
-    "tasks.payment"
+    "tasks.scheduler",
+    "tasks.worker"
 )
 
 AUTH_GRPC_HOST = os.environ.get("AUTH_GRPC_HOST")

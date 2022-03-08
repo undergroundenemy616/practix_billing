@@ -10,7 +10,7 @@ from django.db import transaction
 from django.db.models import F, Q
 
 from subscribtions.models import Account, Bill, Payment
-from tasks.payment import PaymentProcessor
+from tasks.worker import PaymentProcessor
 
 
 class DailyBillPayer(Task):
