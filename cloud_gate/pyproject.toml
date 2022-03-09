@@ -5,7 +5,7 @@ description = "FastAPI service to emulate CloudPayments API for testing"
 authors = ["Sergey Simenshteyn <simenshteyn@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "3.10.0"
+python = "3.10.2"
 fastapi = "0.74.0"
 Faker = "13.0.0"
 gunicorn = "20.1.0"
