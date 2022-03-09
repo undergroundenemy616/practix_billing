@@ -63,3 +63,5 @@ staticfiles/
 tmp/
 .python-version
 poetry.lock
+/manager_service/auth_grpc/auth_pb2.py
+/manager_service/auth_grpc/auth_pb2_grpc.py

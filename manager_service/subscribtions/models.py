@@ -72,6 +72,9 @@ class Account(BaseModel):
         self.tariff = None
         self.save()
 
+    def __str__(self):
+        return f"Account {self.id}"
+
 
 class Bill(BaseModel):
 
@@ -114,6 +117,9 @@ class Bill(BaseModel):
                                     blank=True,
                                     editable=False)
 
+    def __str__(self):
+        return f"Bill {self.id}"
+
 
 class Payment(BaseModel):
 
@@ -133,3 +139,6 @@ class Payment(BaseModel):
     transaction_id = models.PositiveIntegerField(_('ID транзакции'), null=True, blank=True, editable=False)
     is_success = models.BooleanField(_('Статус'), null=False, default=False, blank=True)
     info = models.TextField(_('Информация'), null=True, blank=True)
+
+    def __str__(self):
+        return f"Payment {self.id}"
