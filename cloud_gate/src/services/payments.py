@@ -23,6 +23,11 @@ class PaymentsService:
         return await self.cards_charge()
 
     async def post3ds(self) -> PaymentResult:
+        # Review Comment: ввиду инкапсуляции зависимостей приянтно решение
+        # использовать ООП подход. Три метода реализуют различные эндпоинты
+        # платежного API: оплата по криптограмме, по токену и с 3D Secure.
+        # Сейчас вывод одинаков, но при тестировании может быть добавлена
+        # иная логика в эмулятор на разные эндпоинты.
         return await self.cards_charge()
 
 
