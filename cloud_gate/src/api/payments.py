@@ -14,6 +14,7 @@ async def cards_charge(
         payment: CreatePaymentByCryptogram,
         payments_service: PaymentsService = Depends(get_payments_service)
 ):
+    """ One factor payment by card, needs cryptogram. """
     return await payments_service.cards_charge()
 
 
@@ -24,6 +25,7 @@ async def tokens_charge(
         payment: CreatePaymentByToken,
         payments_service: PaymentsService = Depends(get_payments_service)
 ):
+    """ Recurring payment by previously saved token. """
     return await payments_service.tokens_charge()
 
 
@@ -34,4 +36,5 @@ async def post_3ds(
         payment: CreatePaymentBy3DS,
         payments_service: PaymentsService = Depends(get_payments_service)
 ):
+    """ Two factor payment with Secure 3D authorization. """
     return await payments_service.post3ds()
