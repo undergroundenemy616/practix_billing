@@ -20,7 +20,8 @@ services:
     container_name: cloud_nginx
     restart: always
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./nginx/configs:/etc/nginx/conf.d:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     build:
       context: .
       dockerfile: ./nginx/Dockerfile
