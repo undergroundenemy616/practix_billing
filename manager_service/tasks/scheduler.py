@@ -63,7 +63,10 @@ class DailyBillPayer(Task):
         self.bill.save()
 
     def change_role(self):
-        set_auth_role(id_=self.account.id, role=self.subscribtion)
+        try:
+            set_auth_role(id_=self.account.id, role=self.subscribtion)
+        except Exception as e:
+            capture_exception(e)
 
     def run(self):
         self.bill = self.get_the_bill()
